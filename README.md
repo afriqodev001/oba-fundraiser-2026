@@ -33,7 +33,7 @@ Briana runs her segment from **her own Google Slides deck** because her click-by
 Google Slides' native present mode — those can't be embedded in this site. So cue 4 doesn't show a slide; it
 puts our projector on standby and shows a **hand-off panel** in the console:
 1. Click **Open Bri's Slides** — her deck opens in present mode (with animations).
-2. Move that window onto the projector and press **F** to full-screen it.
+2. Move that window onto the projector and press **F11** (browser full-screen) to hide the address bar.
 3. Briana clicks through with her remote. (Our projector output is on the branded standby meanwhile.)
 4. When she's done, come back and press **NEXT ▶** for the closing video.
 
