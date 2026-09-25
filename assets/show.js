@@ -28,7 +28,7 @@
       width: "100%", height: "100%", videoId: "",
       playerVars: { autoplay: 0, controls: 0, rel: 0, modestbranding: 1, playsinline: 1, fs: 0, iv_load_policy: 3 },
       events: {
-        onReady: () => { playerReady = true; if (pendingVideo) { playVideo(pendingVideo); pendingVideo = null; } },
+        onReady: () => { playerReady = true; if (pendingVideo) { playVideo(pendingVideo.id, pendingVideo.start); pendingVideo = null; } },
         onStateChange: (e) => {
           if (e.data === YT.PlayerState.ENDED) {
             bus.send("event", { name: "video-ended", videoId: currentVideo });
@@ -38,10 +38,10 @@
       },
     });
   };
-  function playVideo(id) {
+  function playVideo(id, start) {
     currentVideo = id;
-    if (!playerReady) { pendingVideo = id; return; }
-    try { player.loadVideoById(id); player.playVideo(); } catch (_) {}
+    if (!playerReady) { pendingVideo = { id, start }; return; }
+    try { player.loadVideoById({ videoId: id, startSeconds: start || 0 }); player.playVideo(); } catch (_) {}
   }
   function stopVideo() { try { if (player) player.stopVideo(); } catch (_) {} }
 
@@ -62,7 +62,8 @@
     } else if (m === "video") {
       show("video");
       if (state.videoId && state.videoId !== currentVideo) {
-        if (unlocked) playVideo(state.videoId); else pendingVideo = state.videoId;
+        if (unlocked) playVideo(state.videoId, state.videoStart);
+        else pendingVideo = { id: state.videoId, start: state.videoStart };
       }
     } else if (m === "black") {
       stopVideo(); show("black");
@@ -72,8 +73,10 @@
   }
 
   bus.on("state", (msg) => render(msg.state));
-  // Ask the console to (re)send the current state, so opening/reloading catches up.
+  // Ask the console to (re)send the current state, so opening/reloading catches up,
+  // and heartbeat so the console can show "projector: live".
   bus.send("event", { name: "hello" });
+  setInterval(() => bus.send("event", { name: "hello" }), 4000);
   render(state);
 
   // ---- unlock (one gesture enables sound + full-screen) --------------------
@@ -85,7 +88,7 @@
     unlocked = true;
     el.unlock.style.display = "none";
     goFullscreen();
-    if (state.mode === "video" && state.videoId) playVideo(state.videoId);
+    if (state.mode === "video" && state.videoId) playVideo(state.videoId, state.videoStart);
   });
   document.addEventListener("keydown", (e) => {
     if (e.key === "f" || e.key === "F") {

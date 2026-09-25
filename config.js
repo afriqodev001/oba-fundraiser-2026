@@ -30,8 +30,8 @@ window.OBA_CONFIG = {
       type: "slide", slide: 81 },
 
     { id: "video-jason", label: "▶ Play Video (after Jason's welcome)",
-      hint: "The video embedded on slide 82. Plays full-screen, then holds on black.",
-      type: "video", youtube: "Hp47LBUG3D8" },
+      hint: "The video embedded on slide 82. Plays full-screen (from 0:10), then holds on black.",
+      type: "video", youtube: "Hp47LBUG3D8", start: 10 },
 
     { id: "briana", label: "Speech — Briana Pokorny (Impact & Donor Relations)",
       hint: "Holds on Briana's slide (83) while she speaks. Music off.",
@@ -42,11 +42,15 @@ window.OBA_CONFIG = {
       type: "video", youtube: "vbayG0spHDI" },
   ],
 
-  // Background music for the cocktail-hour loop — YouTube links or IDs, played
-  // AUDIO-ONLY (the video is hidden). They play in order and repeat. Add/remove
-  // freely here, or manage them live in the console (the console remembers yours).
+  // Background music for the cocktail-hour loop — YouTube links, played AUDIO-ONLY
+  // (the video is hidden). They play in ORDER and then repeat; the first one starts
+  // first. All of these are royalty-free / no-copyright and verified to be embeddable.
+  // Swap or reorder freely here, or manage them live in the console (it remembers yours).
   music: [
-    // e.g. "https://www.youtube.com/watch?v=XXXXXXXXXXX",
+    "https://www.youtube.com/watch?v=36-d8r2vn0s", // Digya (African) — Kevin MacLeod, warm marimba
+    "https://www.youtube.com/watch?v=rOhAckfWIeo", // "Wonders of Africa" — Cazanir, uplifting
+    "https://www.youtube.com/watch?v=0q9cICRdpzw", // African Djembe Instrumental — copyright-free
+    "https://www.youtube.com/watch?v=epokZOWZ20Q", // 2-hour Smooth Jazz Mix — royalty-free (long tail: no dead air)
   ],
 
   // The holding screen shown before you start and between cues.

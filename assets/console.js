@@ -18,21 +18,20 @@
     broadcast(); paint();
   }
   function paint() {
-    // preview
-    const img = $("pvImg"), tag = $("pvTag");
-    const showTag = (txt, sub, amber) => {
-      img.style.display = "none"; tag.style.display = "flex";
-      tag.className = "tag" + (amber ? " amber" : ""); $("pvTagB").textContent = txt;
-      $("pvTagS").textContent = sub || "";
-    };
+    // preview (a true mirror of the projector: slide image, or a MUTED live video)
+    const img = $("pvImg"), tag = $("pvTag"), pv = $("pvVideo"), mh = $("muteHint");
+    const hideAll = () => { img.style.display = "none"; tag.style.display = "none";
+      pv.style.display = "none"; mh.style.display = "none"; };
+    const showTag = (txt, sub, amber) => { hideAll(); tag.style.display = "flex";
+      tag.className = "tag" + (amber ? " amber" : ""); $("pvTagB").textContent = txt; $("pvTagS").textContent = sub || ""; };
     if (S.mode === "slide" || S.mode === "loop") {
-      img.style.display = "block"; tag.style.display = "none"; img.src = C.slidePath(S.slide);
+      hideAll(); stopPv(); img.style.display = "block"; img.src = C.slidePath(S.slide);
     } else if (S.mode === "video") {
-      showTag("▶ VIDEO PLAYING", "youtube: " + (S.videoId || ""), false);
+      hideAll(); pv.style.display = "block"; mh.style.display = "block"; playPv(S.videoId, S.videoStart);
     } else if (S.mode === "black") {
-      showTag("⬛ BLACK", "", false);
+      stopPv(); showTag("⬛ BLACK", "", false);
     } else {
-      showTag("Holding screen", C.holding.title, true);
+      stopPv(); showTag("Holding screen", C.holding.title, true);
     }
     // labels
     const label = { slide: "Speaker slide", loop: "Cocktail-hour loop", video: "Video playing",
@@ -66,7 +65,7 @@
       setState({ mode: "slide", slide: cue.slide, cueId: cue.id }, { keepCue: true });
       musicPause();
     } else if (cue.type === "video") {
-      setState({ mode: "video", videoId: cue.youtube, cueId: cue.id }, { keepCue: true });
+      setState({ mode: "video", videoId: cue.youtube, videoStart: cue.start || 0, cueId: cue.id }, { keepCue: true });
       musicPause();
     }
   }
@@ -149,6 +148,18 @@
   function musicToggle() { mPlaying ? musicPause() : musicPlay(); }
   function musicNext() { if (!mList.length) return; mIdx = (mIdx + 1) % mList.length; musicPlay(true); }
 
+  // ---------- preview mirror (a MUTED copy of the video, for the operator's confidence) ----------
+  let pv = null, pvReady = false, pvPending = null, pvCurrent = null;
+  function playPv(id, start) {
+    if (!id) return;
+    if (!pvReady) { pvPending = { id, start }; return; }
+    try {
+      if (id !== pvCurrent) { pv.loadVideoById({ videoId: id, startSeconds: start || 0 }); pvCurrent = id; }
+      pv.mute(); pv.playVideo();
+    } catch (_) {}
+  }
+  function stopPv() { try { if (pv) pv.stopVideo(); } catch (_) {} pvCurrent = null; }
+
   window.onYouTubeIframeAPIReady = function () {
     mp = new YT.Player("ytmusic", {
       height: "1", width: "1", videoId: "",
@@ -158,13 +169,26 @@
         onStateChange: (e) => { if (e.data === YT.PlayerState.ENDED) musicNext(); },
       },
     });
+    pv = new YT.Player("pvyt", {
+      height: "100%", width: "100%", videoId: "",
+      playerVars: { autoplay: 0, controls: 0, rel: 0, modestbranding: 1, playsinline: 1, fs: 0, mute: 1, disablekb: 1 },
+      events: { onReady: () => { pvReady = true; try { pv.mute(); } catch (_) {} if (pvPending) { playPv(pvPending.id, pvPending.start); pvPending = null; } } },
+    });
   };
 
-  // ---------- projector window ----------
+  // ---------- projector window (heartbeat-tracked) ----------
+  let lastHello = 0;
   bus.on("event", (m) => {
-    if (m.name === "hello") { $("showState").textContent = "projector: live"; $("showState").className = "pill live"; broadcast(); }
+    if (m.name === "hello") { lastHello = Date.now(); broadcast(); }
     if (m.name === "video-ended") setState({ mode: "black" });
   });
+  function updateProjector() {
+    const live = Date.now() - lastHello < 12000;
+    $("showState").textContent = live ? "projector: live" : "projector: not open";
+    $("showState").className = "pill " + (live ? "live" : "off");
+    $("projWarn").style.display = live ? "none" : "block";
+  }
+  setInterval(updateProjector, 2000); updateProjector();
   $("openShow").onclick = () => {
     window.open("show.html", "oba_show", "width=1280,height=720");
     setTimeout(broadcast, 800);

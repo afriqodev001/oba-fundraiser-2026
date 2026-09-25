@@ -46,6 +46,10 @@ This repo is a plain static site. On Netlify: **Add new site → Import from Git
 build command empty, publish directory `.`. Then point the subdomain (e.g. `oba.hyractech.com`) at it via a
 CNAME to the Netlify site.
 
+> **⚠ Make the site PUBLIC.** If the Netlify site is team/password protected, the projector window (a popup)
+> hits Netlify's login wall instead of the show, so videos won't play. Set it public under
+> **Site configuration → Access & security → Visibility / Password protection.**
+
 ## Notes
 - Slides are fully local, so they work even if the venue Wi-Fi is flaky. **Music and the two speaker videos
   stream from YouTube**, so keep the laptop online for those.
