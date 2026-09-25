@@ -6,17 +6,10 @@
   const el = {
     slide: document.getElementById("slide"),
     videowrap: document.getElementById("videowrap"),
-    holding: document.getElementById("holding"),
-    black: document.getElementById("black"),
+    standby: document.getElementById("standby"),
     unlock: document.getElementById("unlock"),
-    holdingTitle: document.getElementById("holdingTitle"),
-    holdingSub: document.getElementById("holdingSub"),
-    holdingLogo: document.getElementById("holdingLogo"),
   };
-  el.holdingTitle.textContent = C.holding.title;
-  el.holdingSub.textContent = C.holding.subtitle;
-  el.holdingLogo.src = "assets/oba-logo.png";
-  el.holdingLogo.onerror = () => { el.holdingLogo.style.display = "none"; };
+  const HOLD = C.holdingSlide || 1;
 
   let unlocked = false;
   let player = null, playerReady = false, pendingVideo = null, currentVideo = null;
@@ -32,7 +25,7 @@
         onStateChange: (e) => {
           if (e.data === YT.PlayerState.ENDED) {
             bus.send("event", { name: "video-ended", videoId: currentVideo });
-            show("black"); // hold on black until the operator advances
+            show("standby"); // hold on branded standby until the operator advances
           }
         },
       },
@@ -49,14 +42,13 @@
   function show(which) {
     el.slide.style.display = which === "slide" ? "block" : "none";
     el.videowrap.style.display = which === "video" ? "block" : "none";
-    el.holding.style.display = which === "holding" ? "flex" : "none";
-    el.black.style.display = which === "black" ? "block" : "none";
+    el.standby.style.display = which === "standby" ? "flex" : "none";
   }
   function render(s) {
     state = s || state;
     const m = state.mode;
     if (m === "slide" || m === "loop") {
-      if (m !== "video") stopVideo();
+      stopVideo();
       el.slide.src = C.slidePath(state.slide || 1);
       show("slide");
     } else if (m === "video") {
@@ -66,9 +58,9 @@
         else pendingVideo = { id: state.videoId, start: state.videoStart };
       }
     } else if (m === "black") {
-      stopVideo(); show("black");
+      stopVideo(); show("standby");
     } else {
-      stopVideo(); show("holding");
+      stopVideo(); el.slide.src = C.slidePath(HOLD); show("slide"); // holding = the welcome slide
     }
   }
 

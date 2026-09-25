@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>OBA 2026 — Operator Console</title>
+  <link rel="icon" href="assets/favicon.png" />
   <link rel="stylesheet" href="assets/app.css" />
 </head>
 <body>
@@ -11,8 +12,8 @@
     <!-- ============ LEFT: run of show ============ -->
     <div class="col">
       <div class="brandbar">
-        <span class="dot"></span>
-        <div><b>Show Control</b><small>Opportunity Builds Africa · 2026</small></div>
+        <img class="brandlogo" src="assets/oba-logo.png" alt="Opportunity Builds Africa" />
+        <div><b>Show Control</b><small>Annual Fundraising · 2026</small></div>
       </div>
 
       <button class="btn primary wide" id="openShow">🖥️ Open Projector Window</button>
@@ -32,7 +33,6 @@
       <div class="preview">
         <img id="pvImg" alt="" />
         <div id="pvVideo" class="pvvideo"><div id="pvyt"></div></div>
-        <div class="tag" id="pvTag"><b id="pvTagB"></b><span id="pvTagS" class="note"></span></div>
         <div id="projWarn" class="projwarn">⚠ Projector window not open — click “Open Projector Window”</div>
         <div id="muteHint" class="mutehint">muted preview · sound plays on the projector</div>
       </div>
@@ -50,25 +50,25 @@
       </div>
 
       <div class="row mt">
-        <button class="btn" id="resumeLoop">↻ Cocktail loop</button>
-        <button class="btn" id="holdingBtn">Holding screen</button>
-        <button class="btn danger" id="blackBtn">⬛ Cut to black</button>
+        <button class="btn" id="resumeLoop">↻ Slideshow</button>
+        <button class="btn" id="holdingBtn">Welcome screen</button>
+        <button class="btn" id="blackBtn">⏸ Standby</button>
+        <span class="grow"></span>
+        <label class="tiny">Speed</label>
+        <input id="loopSec" type="number" min="2" max="60" class="jump" style="width:56px" />
+        <label class="tiny">s</label>
       </div>
 
-      <div class="row mt">
-        <label class="tiny">Loop speed</label>
-        <input id="loopSec" type="number" min="2" max="60" style="width:64px" class="jump" />
-        <label class="tiny">sec / slide</label>
-      </div>
+      <h2 class="sec">All Slides <span class="secnote">click any to jump · staff &amp; titles are slides 84–99, 101</span></h2>
+      <div id="film" class="film"></div>
 
-      <h2 class="sec">Keyboard</h2>
-      <div class="note">
-        <span class="kbd">→</span>/<span class="kbd">Space</span> next slide ·
+      <div class="note" style="margin-top:10px">
+        <span class="kbd">→</span>/<span class="kbd">Space</span> next ·
         <span class="kbd">←</span> prev ·
         <span class="kbd">N</span> next cue ·
-        <span class="kbd">M</span> music play/pause ·
-        <span class="kbd">B</span> black ·
-        <span class="kbd">1</span>–<span class="kbd">5</span> jump to cue
+        <span class="kbd">M</span> music ·
+        <span class="kbd">B</span> standby ·
+        <span class="kbd">1</span>–<span class="kbd">6</span> cue
       </div>
     </div>
 

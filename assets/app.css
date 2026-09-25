@@ -24,16 +24,13 @@ body.show { background: #000; overflow: hidden; cursor: none; }
 }
 .show-stage .videowrap { position: absolute; inset: 0; background: #000; }
 .show-stage .videowrap iframe { width: 100%; height: 100%; border: 0; }
-.holding {
-  position: absolute; inset: 0; display: none; flex-direction: column; gap: 2vh;
-  align-items: center; justify-content: center; text-align: center;
-  background: radial-gradient(120% 120% at 50% 30%, #ffd24d 0%, var(--amber) 55%, #d99a00 100%);
-  color: var(--brown);
+/* Branded standby (shown after videos / when the operator hits Standby) — the OBA logo on a
+   deep, warm-dark background. Reads as intentional on the projector, not a dead black screen. */
+.standby {
+  position: absolute; inset: 0; display: none; align-items: center; justify-content: center;
+  background: radial-gradient(120% 120% at 50% 45%, #2a2118 0%, #14100b 60%, #000 100%);
 }
-.holding img { width: min(42vw, 460px); height: auto; }
-.holding h1 { font-size: clamp(28px, 6vw, 84px); margin: 0; font-weight: 900; letter-spacing: -0.5px; }
-.holding p { font-size: clamp(16px, 2.6vw, 34px); margin: 0; font-weight: 700; opacity: 0.85; }
-.black { position: absolute; inset: 0; background: #000; display: none; }
+.standby img { width: min(52vw, 720px); height: auto; filter: drop-shadow(0 8px 40px rgba(0,0,0,0.5)); }
 
 #unlock {
   position: fixed; inset: 0; z-index: 50; display: flex; flex-direction: column;
@@ -51,13 +48,30 @@ body.show { background: #000; overflow: hidden; cursor: none; }
 
 .col { padding: 16px; overflow-y: auto; border-right: 1px solid var(--line); }
 .col:last-child { border-right: 0; }
-.brandbar { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.brandbar { display: flex; align-items: center; gap: 12px; margin-bottom: 14px;
+  padding-bottom: 12px; border-bottom: 1px solid var(--line); }
 .brandbar .dot { width: 12px; height: 12px; border-radius: 50%; background: var(--orange); }
+.brandbar .brandlogo { height: 40px; width: auto; background: var(--amber); border-radius: 8px; padding: 4px 7px; }
 .brandbar b { font-size: 15px; }
 .brandbar small { color: var(--muted); display: block; font-weight: 600; }
 
 h2.sec { font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted);
-  margin: 18px 0 8px; }
+  margin: 18px 0 8px; display: flex; align-items: baseline; gap: 8px; }
+h2.sec .secnote { text-transform: none; letter-spacing: 0; font-size: 11px; color: var(--muted); opacity: 0.8; font-weight: 500; }
+.grow { flex: 1; }
+
+/* filmstrip */
+.film { display: grid; grid-auto-flow: column; grid-auto-columns: 132px; gap: 8px; overflow-x: auto;
+  padding: 4px 2px 10px; scroll-behavior: smooth; }
+.film .thumb { position: relative; padding: 0; border: 2px solid transparent; border-radius: 8px;
+  overflow: hidden; cursor: pointer; background: #000; aspect-ratio: 16 / 9; }
+.film .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.film .thumb span { position: absolute; left: 4px; top: 4px; background: rgba(0,0,0,0.65); color: #fff;
+  font-size: 10px; font-weight: 800; padding: 1px 5px; border-radius: 5px; }
+.film .thumb:hover { border-color: var(--amber); }
+.film .thumb.on { border-color: var(--orange); box-shadow: 0 0 0 2px rgba(232,84,15,0.4); }
+.film::-webkit-scrollbar { height: 8px; }
+.film::-webkit-scrollbar-thumb { background: var(--line); border-radius: 8px; }
 
 /* run-of-show cue buttons */
 .cue { display: block; width: 100%; text-align: left; border: 1px solid var(--line);

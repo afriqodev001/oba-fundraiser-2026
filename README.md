@@ -19,14 +19,17 @@ Built for **Hyractech** to run OBA's evening. No server, no build step — it's 
 ### The run of show
 | # | Cue | What happens |
 |---|-----|--------------|
-| 1 | **Cocktail Hour — Slideshow Loop** | Slides 1–82 auto-advance on repeat, with background music. |
-| 2 | **Welcome — Jason Bergmann** | Holds on Jason's slide (81). Music off. |
-| 3 | **▶ Play Video (after Jason)** | Plays the video from slide 82 full-screen, then holds on black. |
-| 4 | **Speech — Briana Pokorny** | Holds on Briana's slide (83). Music off. |
-| 5 | **▶ Play Closing Video** | Plays the closing film full-screen, then holds on black. |
+| 1 | **Cocktail Hour — Slideshow** | All slides auto-advance on repeat, with background music. |
+| 2 | **Welcome — Jason Bergmann** | Holds on Jason's slide. Music off. |
+| 3 | **Play Video — after Jason** | Plays the video full-screen (from 0:10), then a branded standby screen. |
+| 4 | **Speech — Briana Pokorny** | Holds on Briana's slide. Music off. |
+| 5 | **Play Closing Video** | Plays the closing film full-screen, then standby. |
+| 6 | **Staff & Acknowledgements** | Jumps to the staff/title block for the presenter to talk over. |
 
-For anything else in the program, use **Prev / Next / Go to slide** to move through the deck manually
-(all 102 slides are loaded), **⬛ Cut to black** between moments, or **Holding screen** for the branded title.
+**Presenter-paced slides (staff, titles — slides 84–99 & 101):** these are in the auto-slideshow *and* meant
+to be clicked through live. Use cue 6 to jump there, then **Next ▶ / →** to advance as the presenter talks —
+or click any slide in the **All Slides** filmstrip to jump straight to it. The **Welcome screen** button shows
+the welcome slide; **⏸ Standby** shows the OBA logo on a dark screen between moments.
 
 ### Keyboard
 `→`/`Space` next slide · `←` prev · `N` next cue · `M` music play/pause · `B` black · `1`–`5` jump to cue.

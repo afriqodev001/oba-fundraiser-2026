@@ -17,30 +17,35 @@
     Object.assign(S, patch);
     broadcast(); paint();
   }
+  const HOLD = C.holdingSlide || 1;
   function paint() {
-    // preview (a true mirror of the projector: slide image, or a MUTED live video)
-    const img = $("pvImg"), tag = $("pvTag"), pv = $("pvVideo"), mh = $("muteHint");
-    const hideAll = () => { img.style.display = "none"; tag.style.display = "none";
-      pv.style.display = "none"; mh.style.display = "none"; };
-    const showTag = (txt, sub, amber) => { hideAll(); tag.style.display = "flex";
-      tag.className = "tag" + (amber ? " amber" : ""); $("pvTagB").textContent = txt; $("pvTagS").textContent = sub || ""; };
-    if (S.mode === "slide" || S.mode === "loop") {
-      hideAll(); stopPv(); img.style.display = "block"; img.src = C.slidePath(S.slide);
-    } else if (S.mode === "video") {
-      hideAll(); pv.style.display = "block"; mh.style.display = "block"; playPv(S.videoId, S.videoStart);
-    } else if (S.mode === "black") {
-      stopPv(); showTag("⬛ BLACK", "", false);
-    } else {
-      stopPv(); showTag("Holding screen", C.holding.title, true);
-    }
+    // preview mirrors the projector: slide image (contain), a MUTED live video, the welcome
+    // slide (holding), or the branded standby (OBA logo on black).
+    const img = $("pvImg"), pv = $("pvVideo"), mh = $("muteHint");
+    const showImg = (src, fit) => { pv.style.display = "none"; mh.style.display = "none";
+      img.style.display = "block"; img.style.objectFit = fit || "contain"; img.src = src; };
+    if (S.mode === "slide" || S.mode === "loop") { stopPv(); showImg(C.slidePath(S.slide)); }
+    else if (S.mode === "video") { img.style.display = "none"; pv.style.display = "block";
+      mh.style.display = "block"; playPv(S.videoId, S.videoStart); }
+    else if (S.mode === "black") { stopPv(); img.style.background = "#000"; showImg("assets/oba-logo.png", "contain"); }
+    else { stopPv(); img.style.background = ""; showImg(C.slidePath(HOLD)); }
+    if (S.mode !== "black") img.style.background = "";
     // labels
-    const label = { slide: "Speaker slide", loop: "Cocktail-hour loop", video: "Video playing",
-                    black: "Black", holding: "Holding screen" }[S.mode];
+    const label = { slide: "Speaker slide", loop: "Slideshow", video: "Video playing",
+                    black: "Standby", holding: "Welcome screen" }[S.mode];
     $("modeLabel").textContent = label;
     $("slideNo").textContent = (S.mode === "slide" || S.mode === "loop") ? S.slide : "—";
-    // active cue highlight
+    // active cue highlight + filmstrip highlight
     document.querySelectorAll(".cue").forEach((b) => b.classList.toggle("active", b.dataset.cue === S.cueId));
+    highlightFilm();
     $("nextLabel").textContent = nextCueLabel();
+  }
+  function highlightFilm() {
+    const cur = (S.mode === "slide" || S.mode === "loop") ? S.slide : 0;
+    document.querySelectorAll("#film .thumb").forEach((t) => {
+      const on = Number(t.dataset.n) === cur; t.classList.toggle("on", on);
+      if (on) t.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
+    });
   }
 
   // ---------- cocktail loop ----------
@@ -90,6 +95,19 @@
       b.onclick = () => goCue(c);
       box.appendChild(b);
     });
+  }
+
+  // ---------- slide filmstrip (click any slide to jump; great for the presenter-paced block) ----------
+  function renderFilm() {
+    const box = $("film");
+    box.innerHTML = "";
+    for (let n = 1; n <= C.slideCount; n++) {
+      const t = document.createElement("button");
+      t.className = "thumb"; t.dataset.n = n; t.title = "Slide " + n;
+      t.innerHTML = `<img loading="lazy" src="slides-thumb/thumb-${String(n).padStart(3, "0")}.jpg" alt="" /><span>${n}</span>`;
+      t.onclick = () => setState({ mode: "slide", slide: n });
+      box.appendChild(t);
+    }
   }
 
   // ---------- manual slide nav ----------
@@ -196,6 +214,7 @@
 
   // ---------- wire up controls ----------
   renderCues();
+  renderFilm();
   $("slideTotal").textContent = C.slideCount;
   $("jump").max = C.slideCount;
   $("loopSec").value = loopSec;
@@ -226,7 +245,7 @@
     else if (e.key === "n" || e.key === "N") nextCue();
     else if (e.key === "m" || e.key === "M") musicToggle();
     else if (e.key === "b" || e.key === "B") { clearLoop(); musicPause(); setState({ mode: "black" }); }
-    else if (/^[1-5]$/.test(e.key)) goCue(C.cues[Number(e.key) - 1]);
+    else if (/^[1-6]$/.test(e.key)) goCue(C.cues[Number(e.key) - 1]);
   });
 
   loadPlaylist();
