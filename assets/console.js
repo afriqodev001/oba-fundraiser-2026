@@ -38,6 +38,10 @@
     // active cue highlight + filmstrip highlight
     document.querySelectorAll(".cue").forEach((b) => b.classList.toggle("active", b.dataset.cue === S.cueId));
     highlightFilm();
+    // hand-off panel (Briana's Google Slides) — shown over the preview when her cue is active
+    const isHandoff = C.cues.some((c) => c.id === S.cueId && c.type === "gslides");
+    $("handoff").style.display = isHandoff ? "flex" : "none";
+    if (isHandoff) $("modeLabel").textContent = "Bri's Program → Google Slides";
     $("nextLabel").textContent = nextCueLabel();
   }
   function highlightFilm() {
@@ -72,6 +76,11 @@
     } else if (cue.type === "video") {
       setState({ mode: "video", videoId: cue.youtube, videoStart: cue.start || 0, cueId: cue.id }, { keepCue: true });
       musicPause();
+    } else if (cue.type === "gslides") {
+      // Hand the projector over to Briana's Google Slides (native animations). Our projector goes to
+      // the branded standby; the console shows the hand-off steps + an Open button.
+      musicPause();
+      setState({ mode: "black", cueId: cue.id }, { keepCue: true });
     }
   }
   function nextCueLabel() {
@@ -211,6 +220,7 @@
     window.open("show.html", "oba_show", "width=1280,height=720");
     setTimeout(broadcast, 800);
   };
+  $("openBri").onclick = () => window.open(C.briSlides, "bri_slides", "width=1280,height=720");
 
   // ---------- wire up controls ----------
   renderCues();
@@ -245,7 +255,7 @@
     else if (e.key === "n" || e.key === "N") nextCue();
     else if (e.key === "m" || e.key === "M") musicToggle();
     else if (e.key === "b" || e.key === "B") { clearLoop(); musicPause(); setState({ mode: "black" }); }
-    else if (/^[1-6]$/.test(e.key)) goCue(C.cues[Number(e.key) - 1]);
+    else if (/^[1-5]$/.test(e.key)) goCue(C.cues[Number(e.key) - 1]);
   });
 
   loadPlaylist();

@@ -16,20 +16,30 @@ Built for **Hyractech** to run OBA's evening. No server, no build step — it's 
    - **Background music** (right): paste YouTube links, press **▶ Play**. It plays audio-only during the
      cocktail loop and auto-pauses for speaker slides and videos.
 
-### The run of show
-| # | Cue | What happens |
-|---|-----|--------------|
-| 1 | **Cocktail Hour — Slideshow** | All slides auto-advance on repeat, with background music. |
-| 2 | **Welcome — Jason Bergmann** | Holds on Jason's slide. Music off. |
-| 3 | **Play Video — after Jason** | Plays the video full-screen (from 0:10), then a branded standby screen. |
-| 4 | **Speech — Briana Pokorny** | Holds on Briana's slide. Music off. |
-| 5 | **Play Closing Video** | Plays the closing film full-screen, then standby. |
-| 6 | **Staff & Acknowledgements** | Jumps to the staff/title block for the presenter to talk over. |
+### The run of show (aligned to the event schedule)
+| # | Cue | Time | What happens |
+|---|-----|------|--------------|
+| 1 | **Social Hour — Slideshow** | 4:00 PM | All slides auto-advance on repeat, with background music. |
+| 2 | **Welcome — Jason Bergmann** | 5:30 PM | Holds on Jason's slide. Music off. |
+| 3 | **Video — A Partner in Change** | 5:40 PM | Plays full-screen (from 0:10), then standby. |
+| 4 | **Bri's Program — Staff Acknowledgement** | 5:45 PM | **Hands off to Briana's Google Slides** (see below). |
+| 5 | **Video — A Day in the Life of a Maasai Girl** | ~6:15 PM | Plays full-screen, then standby. |
 
-**Presenter-paced slides (staff, titles — slides 84–99 & 101):** these are in the auto-slideshow *and* meant
-to be clicked through live. Use cue 6 to jump there, then **Next ▶ / →** to advance as the presenter talks —
-or click any slide in the **All Slides** filmstrip to jump straight to it. The **Welcome screen** button shows
-the welcome slide; **⏸ Standby** shows the OBA logo on a dark screen between moments.
+Between moments (raffle, Fund-a-Need, dinner) use **⏸ Standby** (OBA logo on dark) or **Welcome screen**. The
+**All Slides** filmstrip lets you jump to any slide of the main deck at any time.
+
+### Hand-off: Briana's animated slides (cue 4)
+Briana runs her segment from **her own Google Slides deck** because her click-by-click animations only play in
+Google Slides' native present mode — those can't be embedded in this site. So cue 4 doesn't show a slide; it
+puts our projector on standby and shows a **hand-off panel** in the console:
+1. Click **Open Bri's Slides** — her deck opens in present mode (with animations).
+2. Move that window onto the projector and press **F** to full-screen it.
+3. Briana clicks through with her remote. (Our projector output is on the branded standby meanwhile.)
+4. When she's done, come back and press **NEXT ▶** for the closing video.
+
+Set the deck in `config.js` → `briSlides` (its `…/present` URL). **Rehearse the window switch**, and make sure
+the deck is signed in / accessible on the control laptop (or Briana presents from her own laptop via an HDMI
+switch — same idea, our controller just sits on standby during her part).
 
 ### Keyboard
 `→`/`Space` next slide · `←` prev · `N` next cue · `M` music play/pause · `B` black · `1`–`5` jump to cue.
