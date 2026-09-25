@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>OBA 2026 — Operator Console</title>
+  <link rel="stylesheet" href="assets/app.css" />
+</head>
+<body>
+  <div class="console">
+    <!-- ============ LEFT: run of show ============ -->
+    <div class="col">
+      <div class="brandbar">
+        <span class="dot"></span>
+        <div><b>Show Control</b><small>Opportunity Builds Africa · 2026</small></div>
+      </div>
+
+      <button class="btn primary wide" id="openShow">🖥️ Open Projector Window</button>
+      <div class="note" style="margin:8px 0 4px">
+        Drag that window to the projector, click it once to go full-screen, then run the show from here.
+        <span id="showState" class="pill off">projector: not open</span>
+      </div>
+
+      <h2 class="sec">Run of Show</h2>
+      <div id="cueList"></div>
+      <button class="big-next" id="nextCue">NEXT ▶ <small id="nextLabel"></small></button>
+    </div>
+
+    <!-- ============ CENTER: preview + transport ============ -->
+    <div class="col">
+      <h2 class="sec">On the Projector Now</h2>
+      <div class="preview">
+        <img id="pvImg" alt="" />
+        <div class="tag" id="pvTag"><b id="pvTagB"></b><span id="pvTagS" class="note"></span></div>
+      </div>
+      <div class="statusline">
+        <span id="modeLabel">Holding screen</span>
+        <span>Slide <b id="slideNo">—</b> / <span id="slideTotal"></span></span>
+      </div>
+
+      <div class="transport">
+        <button class="btn" id="prev">◀ Prev</button>
+        <button class="btn" id="next">Next ▶</button>
+        <span class="jump row"><label class="tiny">Go to</label>
+          <input id="jump" type="number" min="1" value="1" /></span>
+        <button class="btn" id="jumpGo">Go</button>
+      </div>
+
+      <div class="row mt">
+        <button class="btn" id="resumeLoop">↻ Cocktail loop</button>
+        <button class="btn" id="holdingBtn">Holding screen</button>
+        <button class="btn danger" id="blackBtn">⬛ Cut to black</button>
+      </div>
+
+      <div class="row mt">
+        <label class="tiny">Loop speed</label>
+        <input id="loopSec" type="number" min="2" max="60" style="width:64px" class="jump" />
+        <label class="tiny">sec / slide</label>
+      </div>
+
+      <h2 class="sec">Keyboard</h2>
+      <div class="note">
+        <span class="kbd">→</span>/<span class="kbd">Space</span> next slide ·
+        <span class="kbd">←</span> prev ·
+        <span class="kbd">N</span> next cue ·
+        <span class="kbd">M</span> music play/pause ·
+        <span class="kbd">B</span> black ·
+        <span class="kbd">1</span>–<span class="kbd">5</span> jump to cue
+      </div>
+    </div>
+
+    <!-- ============ RIGHT: music ============ -->
+    <div class="col">
+      <h2 class="sec">Background Music <span id="musicPill" class="pill off">off</span></h2>
+      <div class="note" style="margin-bottom:10px">Plays audio-only during the cocktail loop (auto-pauses when a
+        speaker slide or video is on). Paste YouTube links below — they're remembered on this computer.</div>
+
+      <div class="row" style="margin-bottom:10px">
+        <button class="btn primary" id="musicToggle">▶ Play</button>
+        <button class="btn" id="musicNext">⏭ Skip</button>
+      </div>
+      <input class="vol" id="vol" type="range" min="0" max="100" value="70" />
+      <div class="statusline"><span>Volume</span><b id="volVal">70</b></div>
+
+      <h2 class="sec">Playlist</h2>
+      <div id="tracks"></div>
+      <div class="addrow">
+        <input id="addUrl" placeholder="Paste a YouTube link…" />
+        <button class="btn" id="addBtn">Add</button>
+      </div>
+      <div class="note" style="margin-top:14px">
+        Everything runs locally in this browser — no internet is needed for the slides. Music and the two
+        speaker videos stream from YouTube, so keep the venue Wi-Fi connected for those.
+      </div>
+    </div>
+  </div>
+
+  <div id="ytmusic" class="hidden-player"></div>
+
+  <script src="config.js"></script>
+  <script src="assets/bus.js"></script>
+  <script src="assets/console.js"></script>
+  <script src="https://www.youtube.com/iframe_api"></script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+# Static site — no build step. Netlify just serves these files.
+[build]
+  publish = "."
+  command = ""
+
+# Long-cache the slide images (they never change once deployed).
+[[headers]]
+  for = "/slides/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800, immutable"

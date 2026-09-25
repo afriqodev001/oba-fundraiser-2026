@@ -1,0 +1,5 @@
+# Source deck (34 MB) — not needed to serve the site; re-download from Google to re-render slides.
+oba_deck.pdf
+*.log
+.DS_Store
+Thumbs.db
