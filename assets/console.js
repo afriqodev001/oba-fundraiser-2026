@@ -9,10 +9,18 @@
   let S = { mode: "holding", slide: 1, from: 1, to: C.slideCount, videoId: null, cueId: null };
   let loopTimer = null;
   let loopSec = Number(localStorage.getItem("oba-loopsec")) || C.loopSeconds;
+  // Which console is actually driving the projector. Only ONE should — otherwise a second, idle console
+  // tab (still on the welcome screen) also answers the projector's heartbeat, and the projector flips
+  // between the running slideshow and that idle tab's welcome screen. A console starts NOT driving; it
+  // takes over when the operator uses it (opens the projector, or issues any cue/slide). When another
+  // console announces it is driving, this one yields — so the most-recently-used tab always wins.
+  const MYID = Math.random().toString(36).slice(2);
+  let driving = false;
 
   // ---------- state broadcast + preview mirror ----------
-  function broadcast() { bus.send("state", { state: S }); }
+  function broadcast() { bus.send("state", { state: S, cid: MYID }); }
   function setState(patch, { keepCue = false } = {}) {
+    driving = true;                 // any state change means the operator is using THIS console
     if (!keepCue && !("cueId" in patch)) patch.cueId = null;
     Object.assign(S, patch);
     broadcast(); paint();
@@ -206,9 +214,13 @@
   // ---------- projector window (heartbeat-tracked) ----------
   let lastHello = 0;
   bus.on("event", (m) => {
-    if (m.name === "hello") { lastHello = Date.now(); broadcast(); }
-    if (m.name === "video-ended") setState({ mode: "black" });
+    // Only the console the operator is driving answers the projector's heartbeat — an idle duplicate tab
+    // stays silent so it can't overwrite the running show with its welcome screen.
+    if (m.name === "hello") { lastHello = Date.now(); if (driving) broadcast(); }
+    if (m.name === "video-ended" && driving) setState({ mode: "black" });
   });
+  // Another console just took control → yield, so only the most-recently-used tab drives the projector.
+  bus.on("state", (m) => { if (m.cid && m.cid !== MYID) driving = false; });
   function updateProjector() {
     const live = Date.now() - lastHello < 12000;
     $("showState").textContent = live ? "projector: live" : "projector: not open";
@@ -217,6 +229,7 @@
   }
   setInterval(updateProjector, 2000); updateProjector();
   $("openShow").onclick = () => {
+    driving = true;                 // the console that opens the projector is the one driving it
     window.open("show.html", "oba_show", "width=1280,height=720");
     setTimeout(broadcast, 800);
   };
@@ -260,5 +273,6 @@
 
   loadPlaylist();
   paint();
-  broadcast();
+  // No broadcast on load: a console pushes to the projector only once the operator drives it (opens the
+  // projector or issues a cue), so opening a second/duplicate tab never clobbers the running show.
 })();
