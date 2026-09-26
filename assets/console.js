@@ -206,8 +206,11 @@
     });
     pv = new YT.Player("pvyt", {
       height: "100%", width: "100%", videoId: "",
-      playerVars: { autoplay: 0, controls: 0, rel: 0, modestbranding: 1, playsinline: 1, fs: 0, mute: 1, disablekb: 1 },
-      events: { onReady: () => { pvReady = true; try { pv.mute(); } catch (_) {} if (pvPending) { playPv(pvPending.id, pvPending.start); pvPending = null; } } },
+      playerVars: { autoplay: 0, controls: 0, rel: 0, modestbranding: 1, playsinline: 1, fs: 0, mute: 1, disablekb: 1, cc_load_policy: 0 },
+      events: {
+        onReady: () => { pvReady = true; try { pv.mute(); } catch (_) {} if (pvPending) { playPv(pvPending.id, pvPending.start); pvPending = null; } },
+        onStateChange: (e) => { if (e.data === YT.PlayerState.PLAYING) { try { pv.unloadModule("captions"); pv.unloadModule("cc"); } catch (_) {} } },
+      },
     });
   };
 

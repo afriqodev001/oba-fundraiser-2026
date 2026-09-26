@@ -25,10 +25,16 @@
   window.onYouTubeIframeAPIReady = function () {
     player = new YT.Player("ytshow", {
       width: "100%", height: "100%", videoId: "",
-      playerVars: { autoplay: 0, controls: 0, rel: 0, modestbranding: 1, playsinline: 1, fs: 0, iv_load_policy: 3 },
+      // cc_load_policy: 0 = don't force YouTube's own captions on (our program videos carry burned-in
+      // subtitles already). We also unload the caption module on play, below, to be certain.
+      playerVars: { autoplay: 0, controls: 0, rel: 0, modestbranding: 1, playsinline: 1, fs: 0, iv_load_policy: 3, cc_load_policy: 0 },
       events: {
         onReady: () => { playerReady = true; if (pendingVideo) { playVideo(pendingVideo.id, pendingVideo.start); pendingVideo = null; } },
         onStateChange: (e) => {
+          if (e.data === YT.PlayerState.PLAYING) {
+            // Turn YouTube captions OFF once the track loads (the video has its own burned-in subtitles).
+            try { player.unloadModule("captions"); player.unloadModule("cc"); } catch (_) {}
+          }
           if (e.data === YT.PlayerState.ENDED) {
             bus.send("event", { name: "video-ended", videoId: currentVideo });
             show("standby"); // hold on branded standby until the operator advances
