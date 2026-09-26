@@ -219,8 +219,9 @@
     if (m.name === "hello") { lastHello = Date.now(); if (driving) broadcast(); }
     if (m.name === "video-ended" && driving) setState({ mode: "black" });
   });
-  // Another console just took control → yield, so only the most-recently-used tab drives the projector.
-  bus.on("state", (m) => { if (m.cid && m.cid !== MYID) driving = false; });
+  // Another console just took control → yield fully (stop driving AND stop our loop timer), so only the
+  // most-recently-used tab drives the projector.
+  bus.on("state", (m) => { if (m.cid && m.cid !== MYID) { driving = false; clearLoop(); } });
   function updateProjector() {
     const live = Date.now() - lastHello < 12000;
     $("showState").textContent = live ? "projector: live" : "projector: not open";
